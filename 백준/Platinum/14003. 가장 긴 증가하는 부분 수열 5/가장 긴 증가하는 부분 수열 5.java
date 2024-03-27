@@ -1,49 +1,74 @@
 import java.util.*;
 import java.io.*;
 
-public class Main {
+public class Main{
+    static int[] dp;
     public static void main(String[] args) throws IOException{
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n=Integer.parseInt(br.readLine());
-        int[] arr=new int[n];
-        st=new StringTokenizer(br.readLine());
-        for(int i=0;i<n;i++) arr[i]=Integer.parseInt(st.nextToken());
+        int length = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int[] index=new int[n];
-        for(int i=0;i<n;i++) index[i]=i;
-        int[] lis=new int[n];
-        int idx=0;
-        lis[idx++]=arr[0];
-        for(int i=1;i<n;i++){
-            if(lis[idx-1]<arr[i]) {
-                index[i]=idx;
-                lis[idx++]=arr[i];
+        dp  = new int[length];
+        int[] dps = new int[length];
+        int[] array = new int[length];
+        //LIS
+        int answer = 0;
+
+
+        for(int a=0; a<length; a++){
+            int value = Integer.parseInt(st.nextToken());
+            array[a] = value;
+
+            int result = search(value,0,answer, answer+1);
+
+            if(result == -1){
+                dp[answer] = value;
+                answer++;
+                dps[a] = answer;
             }
             else{
-                int s=0;
-                int e=idx-1;
-                while(s<e){
-                    int m=(s+e)>>1;
-                    if(lis[m]<arr[i]) s=m+1;
-                    else e=m;
-                }
-                index[i]=e;
-                lis[e]=arr[i];
+                dp[result] = value;
+                dps[a] = result+1;
             }
         }
-        int t=idx-1;
-        Stack<Integer> s=new Stack<>();
-        for(int i=n-1;i>=0;i--){
-            if(index[i]==t){
-                s.push(arr[i]);
-                t--;
+
+        System.out.println(answer);
+        Stack<Integer> stack = new Stack<Integer>();
+        for(int a=dps.length-1 ; a>=0; a--){
+            if(answer == dps[a]){
+                stack.push(array[a]);
+                answer --;
             }
         }
-        System.out.println(idx);
-        StringBuilder sb=new StringBuilder();
-        while(!s.isEmpty()) sb.append(s.pop()+" ");
-        System.out.print(sb);
+        StringBuffer sb= new StringBuffer();
+
+        while(!stack.isEmpty()){
+            sb.append(stack.pop()+" ");
+        }
+        System.out.println(sb);
+    }
+
+    private static int search(int value,int start, int end, int max){
+        //이분탐색
+        int res = 0;
+        while(start<=end){
+            int median =  (start+ end)/2;
+
+            if(value>dp[median]){
+                start = median +1;
+            }
+            else{
+                end = median -1;
+                res = median;
+            }
+        }
+
+        if(start== max){
+            return -1;
+        }
+        else{
+            return start;
+        }
     }
 }
