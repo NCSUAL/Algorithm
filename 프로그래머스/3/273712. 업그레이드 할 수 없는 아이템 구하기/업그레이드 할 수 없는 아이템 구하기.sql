@@ -1,4 +1,4 @@
--- 코드를 작성해주세요
+-- 코드를 작성해주세요d
 SELECT
 I.ITEM_ID,
 I.ITEM_NAME,
